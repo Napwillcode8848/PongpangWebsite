@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/PongpangWebsite/static/css/main.fbc28737.css",
-    "main.js": "/PongpangWebsite/static/js/main.df3de275.js",
+    "main.js": "/PongpangWebsite/static/js/main.22f2c7f4.js",
     "static/js/453.e672d1e1.chunk.js": "/PongpangWebsite/static/js/453.e672d1e1.chunk.js",
     "static/media/img1.jpg": "/PongpangWebsite/static/media/img1.4f59760e19bfcc87abc9.jpg",
     "static/media/connect.png": "/PongpangWebsite/static/media/connect.f6af59ce0f946706a15b.png",
@@ -12,11 +12,11 @@
     "static/media/boxicons.woff2": "/PongpangWebsite/static/media/boxicons.df635aaf04cd75132f62.woff2",
     "index.html": "/PongpangWebsite/index.html",
     "main.fbc28737.css.map": "/PongpangWebsite/static/css/main.fbc28737.css.map",
-    "main.df3de275.js.map": "/PongpangWebsite/static/js/main.df3de275.js.map",
+    "main.22f2c7f4.js.map": "/PongpangWebsite/static/js/main.22f2c7f4.js.map",
     "453.e672d1e1.chunk.js.map": "/PongpangWebsite/static/js/453.e672d1e1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.fbc28737.css",
-    "static/js/main.df3de275.js"
+    "static/js/main.22f2c7f4.js"
   ]
 }
