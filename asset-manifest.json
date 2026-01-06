@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/NapasornKaoian-Pongpang/static/css/main.36e160a2.css",
+    "main.js": "/NapasornKaoian-Pongpang/static/js/main.dd8798bf.js",
+    "static/js/453.e672d1e1.chunk.js": "/NapasornKaoian-Pongpang/static/js/453.e672d1e1.chunk.js",
+    "static/media/img1.jpg": "/NapasornKaoian-Pongpang/static/media/img1.4f59760e19bfcc87abc9.jpg",
+    "static/media/connect.png": "/NapasornKaoian-Pongpang/static/media/connect.f6af59ce0f946706a15b.png",
+    "static/media/boxicons.svg": "/NapasornKaoian-Pongpang/static/media/boxicons.9e2b21b135bc7d4c803f.svg",
+    "static/media/boxicons.eot": "/NapasornKaoian-Pongpang/static/media/boxicons.65a8ce52fc5427e8f94d.eot",
+    "static/media/boxicons.woff": "/NapasornKaoian-Pongpang/static/media/boxicons.d12afc36557395143e4b.woff",
+    "static/media/boxicons.ttf": "/NapasornKaoian-Pongpang/static/media/boxicons.db9ddb1898dbd76badca.ttf",
+    "static/media/boxicons.woff2": "/NapasornKaoian-Pongpang/static/media/boxicons.df635aaf04cd75132f62.woff2",
+    "index.html": "/NapasornKaoian-Pongpang/index.html",
+    "main.36e160a2.css.map": "/NapasornKaoian-Pongpang/static/css/main.36e160a2.css.map",
+    "main.dd8798bf.js.map": "/NapasornKaoian-Pongpang/static/js/main.dd8798bf.js.map",
+    "453.e672d1e1.chunk.js.map": "/NapasornKaoian-Pongpang/static/js/453.e672d1e1.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.36e160a2.css",
+    "static/js/main.dd8798bf.js"
+  ]
+}
