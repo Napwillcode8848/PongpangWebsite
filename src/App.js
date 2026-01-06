@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './App.css';
 import 'boxicons/css/boxicons.min.css';
-import img1 from './images/img1.jpg';
+import mainimg from './images/img1.jpg';
+import connectimg from './images/connect.png';
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [projectTab, setProjectTab] = useState('highschool');
+  const [projectTab, setProjectTab] = useState('2025');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -19,9 +21,9 @@ function App() {
   };
 
   const slides = [
-    { id: 1, src: img1, alt: 'banner1', caption: 'Caption Text' },
-    { id: 2, src: img1, alt: 'banner2', caption: 'Caption Two' },
-    { id: 3, src: img1, alt: 'banner3', caption: 'Caption Three' }
+    { id: 1, src: mainimg, alt: 'banner1', caption: 'Caption Text' },
+    { id: 2, src: mainimg, alt: 'banner2', caption: 'Caption Two' },
+    { id: 3, src: mainimg, alt: 'banner3', caption: 'Caption Three' }
   ];
 
   const plusSlides = (n) => {
@@ -109,7 +111,19 @@ function App() {
             </div>
           </div>
           <div className="home__image">
-            <div className="slideshow__container">
+            <img 
+              src={mainimg} 
+              alt="Pongpang" 
+              className="home__img"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section
+      <section id="about" className="blog__section">
+        <h2 className="section__title">Pongpang's Blog</h2>
+        <div className="slideshow__container">
               {slides.map((slide, index) => (
                 <div key={slide.id} className="mySlides fade" style={{ display: index === currentSlide ? 'block' : 'none' }}>
                   <div className="numbertext">{slide.id} / {slides.length}</div>
@@ -132,9 +146,7 @@ function App() {
                 ></span>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
+      </section> */}
 
       {/* About Section */}
       <section id="about" className="about section">
@@ -143,8 +155,11 @@ function App() {
           <div className="about__content">
             <h3 className="about__heading">Who I Am</h3>
             <p className="about__text">
-              I'm a passionate web developer with a keen eye for design. I specialize in 
-              creating responsive, user-friendly applications using modern technologies like React.js.
+              I’m Napasorn, a Computer Science specialist at the University of Toronto with a focus on technology leadership, cognitive science, and statistics. I’m interested in building human-centered technology that bridges research, design, and real-world impact.
+
+              My experience spans AI research and product development—from analyzing large-scale CNN representations to study the alignment between computer vision models and human perception, to leading the development of AI-powered platforms used in industry. I’ve worked on projects in accessibility, health analytics, and educational technology, combining machine learning with thoughtful system design.
+
+              Beyond technical work, I’m actively involved in student leadership and outreach, and I value collaboration, curiosity, and continuous learning.
             </p>
             <p className="about__text">
               With a background in both design and development, I bridge the gap between 
@@ -154,23 +169,103 @@ function App() {
             
             <h3 className="about__heading" style={{ marginTop: '2rem' }}>Skills</h3>
             <div className="skills__container">
-              <div className="skill__item">
-                <span className="skill__name">React.js</span>
+              <div className="skills__category">
+                <h4 className="skills__category-title">Programming Languages</h4>
+                <div className="skills__items">
+                  <div className="skill__item">
+                    <span className="skill__name">Python</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Java</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">JavaScript</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">R</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">SQL</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Assembly</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">MATLAB</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">HTML/CSS</span>
+                  </div>
+                </div>
               </div>
-              <div className="skill__item">
-                <span className="skill__name">JavaScript</span>
+
+              <div className="skills__category">
+                <h4 className="skills__category-title">Machine Learning & Data Science</h4>
+                <div className="skills__items">
+                  <div className="skill__item">
+                    <span className="skill__name">PyTorch</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">NumPy</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Matplotlib</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Computer Vision</span>
+                  </div>
+                </div>
               </div>
-              <div className="skill__item">
-                <span className="skill__name">CSS/HTML</span>
+
+              <div className="skills__category">
+                <h4 className="skills__category-title">Web & Frontend</h4>
+                <div className="skills__items">
+                  <div className="skill__item">
+                    <span className="skill__name">React.js</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Responsive Design</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">UI/UX Design</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Figma</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Framer</span>
+                  </div>
+                </div>
               </div>
-              <div className="skill__item">
-                <span className="skill__name">UI/UX Design</span>
-              </div>
-              <div className="skill__item">
-                <span className="skill__name">Responsive Design</span>
-              </div>
-              <div className="skill__item">
-                <span className="skill__name">Web Optimization</span>
+
+              <div className="skills__category">
+                <h4 className="skills__category-title">Tools & Platforms</h4>
+                <div className="skills__items">
+                  <div className="skill__item">
+                    <span className="skill__name">Git Control</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Docker</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Supabase</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Microsoft Power Apps</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Power Automate</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Power BI</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">SharePoint</span>
+                  </div>
+                  <div className="skill__item">
+                    <span className="skill__name">Ren'Py</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -261,7 +356,7 @@ function App() {
             </div>
           </div>
           <div className="contact__pongpangimg">
-            <div className="image__blob"></div>
+            <img src={connectimg} alt="Stay Positive!" className="contact__img"/>
           </div>
         </div>
       </section>
