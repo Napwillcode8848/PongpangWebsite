@@ -10,6 +10,7 @@ function App() {
   const [projectTab, setProjectTab] = useState('2025');
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const basePath = process.env.PUBLIC_URL || '';
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -309,7 +310,7 @@ function App() {
         <div className="pdf__viewer-container">
           <div className="pdf__viewer">
             <iframe 
-              src={`/pdfs/${projectTab}.pdf#page=${currentPage}`}
+              src={`${basePath}/pdfs/${projectTab}.pdf#page=${currentPage}`}
               width="100%"
               height="100%"
               frameBorder="0"
