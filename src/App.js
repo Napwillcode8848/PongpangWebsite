@@ -310,7 +310,7 @@ function App() {
         <div className="pdf__viewer-container">
           <div className="pdf__viewer">
             <iframe 
-              src={`${basePath}/pdfs/${projectTab}.pdf#page=${currentPage}`}
+              src={`${process.env.PUBLIC_URL}/pdfs/${projectTab}.pdf#page=${currentPage}`}
               width="100%"
               height="100%"
               frameBorder="0"
