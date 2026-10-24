@@ -1,248 +1,192 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import './HiddenGarden.css';
 import 'boxicons/css/boxicons.min.css';
-import mainimg from './images/img1.jpg';
-import connectimg from './images/connect.png';
+
+// 👉 Put your 3 images in src/images/ with these names (or change the names here)
+import object1 from './images/object1.png';
+import object2 from './images/object2.png';
+import object3 from './images/object3.png';
+
+const WORLD_W = 3200;
+const WORLD_H = 2200;
+
+// Each object opens one of your portfolio PDFs (public/pdfs/<pdf>.pdf)
+// x / y are positions in the big world (px). Move them around to hide them better!
+const OBJECTS = [
+  { id: 'highschool', label: 'Highschool Portfolio', pdf: 'highschool', src: object1, x: 2700, y: 400, size: 90 },
+  { id: '2025', label: '2025 Portfolio', pdf: '2025', src: object2, x: 450, y: 1650, size: 90 },
+  { id: '2026', label: '2026 Portfolio', pdf: '2026', src: object3, x: 1750, y: 1100, size: 90 },
+];
+
+const FLOWERS = ['🌸', '🌼', '🌷', '🌻', '🌺', '💐', '🪻', '🌹', '🏵️', '🪷', '🍀'];
+
+// small seeded random so the garden looks the same on every load
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 function App() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
-  const [projectTab, setProjectTab] = useState('2025');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentSlide, setCurrentSlide] = useState(0);
   const basePath = process.env.PUBLIC_URL || '';
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const [found, setFound] = useState([]);
+  const [openObj, setOpenObj] = useState(null);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const drag = useRef({ active: false, startX: 0, startY: 0, origX: 0, origY: 0, moved: false });
+
+  const clamp = useCallback((x, y) => {
+    const minX = Math.min(0, window.innerWidth - WORLD_W);
+    const minY = Math.min(0, window.innerHeight - WORLD_H);
+    return { x: Math.max(minX, Math.min(0, x)), y: Math.max(minY, Math.min(0, y)) };
+  }, []);
+
+  // start in the middle of the garden
+  useEffect(() => {
+    setOffset(clamp(-(WORLD_W - window.innerWidth) / 2, -(WORLD_H - window.innerHeight) / 2));
+    const onResize = () => setOffset((o) => clamp(o.x, o.y));
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [clamp]);
+
+  // close popup with Escape
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && setOpenObj(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // lots of flowers!
+  const flowers = useMemo(() => {
+    const rand = mulberry32(2026);
+    const list = [];
+    for (let i = 0; i < 1100; i++) {
+      list.push({
+        id: i,
+        emoji: FLOWERS[Math.floor(rand() * FLOWERS.length)],
+        x: rand() * WORLD_W,
+        y: rand() * WORLD_H,
+        size: 28 + rand() * 46,
+        rot: -30 + rand() * 60,
+      });
+    }
+    return list;
+  }, []);
+
+  const onPointerDown = (e) => {
+    drag.current = {
+      active: true, startX: e.clientX, startY: e.clientY,
+      origX: offset.x, origY: offset.y, moved: false,
+    };
+    setDragging(true);
   };
 
-  const scrollToSection = (sectionId) => {
-    setActiveSection(sectionId);
-    setMenuOpen(false);
+  const onPointerMove = (e) => {
+    const d = drag.current;
+    if (!d.active) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    if (Math.abs(dx) + Math.abs(dy) > 6) d.moved = true;
+    setOffset(clamp(d.origX + dx, d.origY + dy));
   };
 
-  const slides = [
-    { id: 1, src: mainimg, alt: 'banner1', caption: 'Caption Text' },
-    { id: 2, src: mainimg, alt: 'banner2', caption: 'Caption Two' },
-    { id: 3, src: mainimg, alt: 'banner3', caption: 'Caption Three' }
-  ];
-
-  const plusSlides = (n) => {
-    setCurrentSlide((prev) => (prev + n + slides.length) % slides.length);
+  const endDrag = () => {
+    drag.current.active = false;
+    setDragging(false);
   };
 
-  const goToSlide = (n) => {
-    setCurrentSlide(n);
+  const handleObjectClick = (obj) => {
+    if (drag.current.moved) return; // it was a drag, not a click
+    setFound((f) => (f.includes(obj.id) ? f : [...f, obj.id]));
+    setOpenObj(obj);
   };
 
   return (
-    <div className="App">
-      {/* Navigation Header */}
-      <header className="header">
-        <div className="nav__container">
-          <div className="nav__logo">
-            <span className="nav__logo-text">Pongpang</span>
-          </div>
-
-          <nav className={`nav ${menuOpen ? 'nav__mobile' : ''}`}>
-            <a
-              href="#home"
-              className={`nav__link ${activeSection === 'home' ? 'active' : ''}`}
-              onClick={() => scrollToSection('home')}
-            >
-              Home
-            </a>
-            <a
-              href="#about"
-              className={`nav__link ${activeSection === 'about' ? 'active' : ''}`}
-              onClick={() => scrollToSection('about')}
-            >
-              About
-            </a>
-            <a
-              href="#projects"
-              className={`nav__link ${activeSection === 'projects' ? 'active' : ''}`}
-              onClick={() => scrollToSection('projects')}
-            >
-              Portfolio
-            </a>
-            <a
-              href="#contact"
-              className={`nav__link ${activeSection === 'contact' ? 'active' : ''}`}
-              onClick={() => scrollToSection('contact')}
-            >
-              Contact
-            </a>
-          </nav>
-
-          <div className="nav__toggle" onClick={toggleMenu}>
-            <i className={`bx ${menuOpen ? 'bx-x' : 'bx-menu'}`}></i>
-          </div>
-        </div>
-      </header>
-
-      {/* Home Section */}
-      <section id="home" className="home section">
-        <div className="home__container">
-          <div className="home__content">
-            <h1 className="home__title">Hi, I'm Pongpang!</h1>
-            <h2 className="home__subtitle">Computer Science Student Exploring AI, Research & Technology for Real-World Impact | International Scholar Award Recipient</h2>
-            <p className="home__description">
-              I’m passionate about computer vision and machine learning research, with a focus on applying CS to meaningful real-world problems.
-              Explore my portfolio below to see how I blend computer science with research to build impactful technology across psychology, healthcare, sports, and HR.
-            </p>
-            <div className="home__buttons">
-              <a href="#projects" className="button button__primary">
-                View My Work
-              </a>
-              <a href="#contact" className="button button__secondary">
-                Get In Touch
-              </a>
-            </div>
-            <div className="home__socials">
-              <a href="https://github.com/Napwillcode8848" target="_blank" rel="noopener noreferrer" className="social__link" title="GitHub">
-                <i className='bx bxl-github'></i>
-              </a>
-              <a href="https://www.linkedin.com/in/napaorn-kao-ian" target="_blank" rel="noopener noreferrer" className="social__link" title="LinkedIn">
-                <i className='bx bxl-linkedin'></i>
-              </a>
-              <a href="mailto:napasornkaoian@gmail.com" className="social__link" title="Email">
-                <i className='bx bxs-envelope'></i>
-              </a>
-            </div>
-          </div>
-          <div className="home__image">
-            <img
-              src={mainimg}
-              alt="Pongpang"
-              className="home__img"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Blog Section
-      <section id="about" className="blog__section">
-        <h2 className="section__title">Pongpang's Blog</h2>
-        <div className="slideshow__container">
-              {slides.map((slide, index) => (
-                <div key={slide.id} className="mySlides fade" style={{ display: index === currentSlide ? 'block' : 'none' }}>
-                  <div className="numbertext">{slide.id} / {slides.length}</div>
-                  <img src={slide.src} alt={slide.alt} style={{ width: '100%' }} />
-                  <div className="text">{slide.caption}</div>
-                </div>
-              ))}
-
-              <a className="prev" onClick={() => plusSlides(-1)}>&#10094;</a>
-              <a className="next" onClick={() => plusSlides(1)}>&#10095;</a>
-            </div>
-
-            <div style={{ textAlign: 'center' }}>
-              {slides.map((slide, index) => (
-                <span
-                  key={index}
-                  className="dot"
-                  onClick={() => goToSlide(index)}
-                  style={{ backgroundColor: index === currentSlide ? '#717171' : '#bbb' }}
-                ></span>
-              ))}
-            </div>
-      </section> */}
-
-      {/* Projects Section */}
-      <section id="projects" className="projects section">
-        <h2 className="section__title" style={{ color: '#fffdb4' }}>Pongpang's Portfolios</h2>
-
-        <div className="portfolio__tabs">
-          <button
-            className={`portfolio__tab ${projectTab === 'highschool' ? 'active' : ''}`}
-            onClick={() => {
-              setProjectTab('highschool');
-              setCurrentPage(1);
-            }}
+    <div
+      className={`garden ${dragging ? 'dragging' : ''}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerLeave={endDrag}
+    >
+      {/* The big scrollable flower world */}
+      <div
+        className="garden__world"
+        style={{ width: WORLD_W, height: WORLD_H, transform: `translate(${offset.x}px, ${offset.y}px)` }}
+      >
+        {flowers.map((f) => (
+          <span
+            key={f.id}
+            className="flower"
+            style={{ left: f.x, top: f.y, fontSize: f.size, transform: `rotate(${f.rot}deg)` }}
           >
-            Highschool
-          </button>
-          <button
-            className={`portfolio__tab ${projectTab === '2025' ? 'active' : ''}`}
-            onClick={() => {
-              setProjectTab('2025');
-              setCurrentPage(1);
-            }}
-          >
-            2025
-          </button>
-          <button
-            className={`portfolio__tab ${projectTab === '2026' ? 'active' : ''}`}
-            onClick={() => {
-              setProjectTab('2026');
-              setCurrentPage(1);
-            }}
-          >
-            2026
-          </button>
-        </div>
+            {f.emoji}
+          </span>
+        ))}
 
-        <div className="pdf__viewer-container">
-          <div className="pdf__viewer">
+        {OBJECTS.map((o) => (
+          <button
+            key={o.id}
+            className={`hidden-object ${found.includes(o.id) ? 'found' : ''}`}
+            style={{ left: o.x, top: o.y, width: o.size, height: o.size }}
+            onClick={() => handleObjectClick(o)}
+            aria-label={o.label}
+            title={found.includes(o.id) ? o.label : ''}
+          >
+            <img src={o.src} alt={o.label} draggable={false} />
+          </button>
+        ))}
+      </div>
+
+      {/* Overlay UI */}
+      <div className="hud hud__title">
+        <h1>Pongpang's Secret Garden</h1>
+        <p>Computer Science · AI · Research</p>
+      </div>
+
+      <div className="hud hud__progress">
+        Found {found.length}/3
+        {OBJECTS.map((o) => (
+          <div key={o.id} className={`progress__slot ${found.includes(o.id) ? 'done' : ''}`}>
+            {found.includes(o.id) && <img src={o.src} alt="" />}
+          </div>
+        ))}
+      </div>
+
+      <div className="hud hud__socials">
+        <a href="https://github.com/Napwillcode8848" target="_blank" rel="noopener noreferrer" title="GitHub">
+          <i className="bx bxl-github"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/napaorn-kao-ian" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+          <i className="bx bxl-linkedin"></i>
+        </a>
+        <a href="mailto:napasornkaoian@gmail.com" title="Email">
+          <i className="bx bxs-envelope"></i>
+        </a>
+      </div>
+
+      <div className="hud hud__hint">Drag around to explore 🌸 Find 3 hidden objects to open my portfolio</div>
+
+      {/* Portfolio popup */}
+      {openObj && (
+        <div className="modal" onPointerDown={(e) => e.stopPropagation()} onClick={() => setOpenObj(null)}>
+          <div className="modal__box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__bar">
+              <span>{openObj.label}</span>
+              <button className="modal__close" onClick={() => setOpenObj(null)} aria-label="Close">✕</button>
+            </div>
             <iframe
-              src={`${process.env.PUBLIC_URL}/pdfs/${projectTab}.pdf#page=${currentPage}`}
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              title={`Portfolio - ${projectTab}`}
+              className="modal__frame"
+              src={`${basePath}/pdfs/${openObj.pdf}.pdf`}
+              title={openObj.label}
             />
           </div>
         </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="contact section">
-        <h2 className="section__title">Get In Touch</h2>
-        <div className="contact__container">
-          <div className="contact__info">
-            <h3 className="contact__heading">Let's work together</h3>
-            <p className="contact__text">
-              I’d love to connect, hear different perspectives, and have a conversation. Feel free to reach out!
-            </p>
-
-            <div className="contact__details">
-              <div className="contact__item">
-                <i className='bx bxs-envelope'></i>
-                <div>
-                  <h4>Email</h4>
-                  <p>napasornkaoian@gmail.com</p>
-                </div>
-              </div>
-              <div className="contact__item">
-                <i className='bx bxl-linkedin'></i>
-                <div>
-                  <h4>LinkedIn</h4>
-                  <p>napaorn-kao-ian</p>
-                </div>
-              </div>
-              <div className="contact__item">
-                <i className='bx bxs-map'></i>
-                <div>
-                  <h4>Location</h4>
-                  <p>Toronto, Canada</p>
-                  <p>Bangkok, Thailand</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="contact__pongpangimg">
-            <img src={connectimg} alt="Stay Positive!" className="contact__img"/>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer__content">
-          <p>&copy; 2024 Napasorn Kao-ian. All rights reserved.</p>
-        </div>
-      </footer>
+      )}
     </div>
   );
 }

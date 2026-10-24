@@ -1,0 +1,187 @@
+html, body, #root { margin: 0; height: 100%; overflow: hidden; }
+
+.garden {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #f7d6e0;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+.garden.dragging { cursor: grabbing; }
+
+.garden__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+  background:
+    radial-gradient(circle at 20% 30%, #ffe9f0 0, transparent 40%),
+    radial-gradient(circle at 75% 70%, #e6f7d4 0, transparent 45%),
+    radial-gradient(circle at 50% 50%, #fff3c9 0, transparent 50%),
+    #f4c6d7;
+}
+
+.flower {
+  position: absolute;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* The 3 hidden objects */
+.hidden-object {
+  position: absolute;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.25));
+}
+.hidden-object img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+.hidden-object:hover { transform: scale(1.15) rotate(-3deg); }
+.hidden-object.found {
+  filter: drop-shadow(0 0 12px #fff176) drop-shadow(0 0 4px #ffb300);
+}
+
+/* HUD */
+.hud {
+  position: fixed;
+  z-index: 20;
+  pointer-events: none;
+}
+.hud > * { pointer-events: auto; }
+
+.hud__title {
+  top: 16px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 10px 18px;
+  border-radius: 16px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+.hud__title h1 { margin: 0; font-size: 1.1rem; color: #7a2e4d; }
+.hud__title p { margin: 2px 0 0; font-size: 0.8rem; color: #555; }
+
+.hud__progress {
+  top: 16px;
+  right: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 10px 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  font-size: 0.85rem;
+  color: #7a2e4d;
+  font-weight: 600;
+}
+.progress__slot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px dashed #c98ba3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #fff;
+}
+.progress__slot.done { border: 2px solid #ffb300; }
+.progress__slot img { width: 100%; height: 100%; object-fit: contain; }
+
+.hud__socials {
+  bottom: 18px;
+  left: 20px;
+  display: flex;
+  gap: 10px;
+}
+.hud__socials a {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #7a2e4d;
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+.hud__socials a:hover { transform: translateY(-3px); }
+
+.hud__hint {
+  bottom: 18px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 8px 14px;
+  border-radius: 14px;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+/* Popup */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(40, 10, 25, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3vh 3vw;
+  animation: fadeIn 0.2s ease;
+  cursor: default;
+  touch-action: auto;
+}
+.modal__box {
+  position: relative;
+  width: min(1000px, 100%);
+  height: 100%;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: popIn 0.25s ease;
+}
+.modal__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: #fbe3ec;
+  color: #7a2e4d;
+  font-weight: 600;
+}
+.modal__close {
+  border: none;
+  background: #7a2e4d;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.modal__frame { flex: 1; width: 100%; border: 0; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+@media (max-width: 600px) {
+  .hud__title p, .hud__hint { display: none; }
+}
